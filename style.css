@@ -1,0 +1,661 @@
+/* ===================== Reset & Base ===================== */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Arial Hebrew", "Rubik", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #1b3a5c 0%, #0c1f33 55%, #060e18 100%);
+  color: #eef4fb;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  touch-action: manipulation;
+}
+
+button, input {
+  font-family: inherit;
+}
+
+input[type="number"] {
+  color: #0c1f33;
+}
+
+/* ===================== Header ===================== */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(6, 14, 24, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffd766;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-wings {
+  font-size: 1rem;
+  transform: scaleX(-1);
+  opacity: 0.9;
+}
+
+.help-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #eef4fb;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.help-btn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body.hide-header-ingame .app-header {
+  display: none;
+}
+
+/* ===================== Main / Screens ===================== */
+#app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.screen-inner {
+  padding: 18px 16px 28px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.screen-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 4px 0 6px;
+  color: #ffffff;
+}
+
+/* ===================== Buttons ===================== */
+.btn {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.08s ease, filter 0.15s ease;
+  color: #0c1f33;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #ffd766, #f2b632);
+  color: #23150a;
+  box-shadow: 0 4px 14px rgba(242, 182, 50, 0.35);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #eef4fb;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.btn-large {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.15rem;
+  border-radius: 16px;
+}
+
+.btn-huge {
+  flex: 1;
+  padding: 26px 10px;
+  font-size: 1.5rem;
+  border-radius: 20px;
+  font-weight: 800;
+}
+
+.btn-correct {
+  background: linear-gradient(180deg, #6ee089, #2fb45a);
+  color: #063014;
+  box-shadow: 0 6px 18px rgba(47, 180, 90, 0.4);
+}
+
+.btn-skip {
+  background: linear-gradient(180deg, #ff8f7a, #e6503a);
+  color: #360a04;
+  box-shadow: 0 6px 18px rgba(230, 80, 58, 0.4);
+}
+
+.btn-steal {
+  margin-top: 14px;
+  width: 100%;
+  background: linear-gradient(180deg, #9fd6ff, #4fa3e0);
+  color: #071c2e;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===================== Settings Screen ===================== */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #b9cbe0;
+}
+
+.segmented {
+  display: flex;
+  gap: 8px;
+}
+
+.segmented-btn {
+  flex: 1;
+  padding: 12px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: #eef4fb;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.segmented-btn.selected {
+  background: linear-gradient(180deg, #ffd766, #f2b632);
+  color: #23150a;
+  border-color: transparent;
+}
+
+.team-names-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-name-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.94);
+  color: #0c1f33;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.steps-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.steps-input-row input[type="number"] {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.94);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.stepper-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #eef4fb;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ===================== Board Screen ===================== */
+.board-track-wrap {
+  overflow-x: auto;
+  padding: 6px 0 14px;
+}
+
+.board-track {
+  position: relative;
+  height: 64px;
+  min-width: 100%;
+  background: linear-gradient(90deg, #16324f, #1e4568);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.board-track::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 4%;
+  left: 4%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(to left, rgba(255,255,255,0.35) 0 10px, transparent 10px 20px);
+}
+
+.track-flag {
+  position: absolute;
+  left: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+}
+
+.track-pawn {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transform: translate(50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: right 0.4s ease;
+}
+
+.board-teams-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.board-team-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.board-team-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.board-team-name-editable {
+  flex: 1;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+}
+
+.board-team-name-editable:active {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+.board-team-name-input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #fff;
+  color: #0c1f33;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.board-team-pos {
+  font-size: 0.9rem;
+  color: #b9cbe0;
+  font-weight: 700;
+  min-width: 54px;
+  text-align: left;
+}
+
+/* ===================== Modal ===================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 9, 16, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal-box {
+  background: #102944;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  padding: 20px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 88dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 0;
+}
+
+.team-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.team-pick-btn {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #eef4fb;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-pick-btn.picked {
+  background: linear-gradient(180deg, #ffd766, #f2b632);
+  color: #23150a;
+}
+
+/* ===================== Help popup ===================== */
+.help-list {
+  padding-inline-start: 22px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #dbe8f7;
+}
+
+.help-list li::marker {
+  color: #ffd766;
+  font-weight: 800;
+}
+
+/* ===================== Countdown ===================== */
+.countdown-inner {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.countdown-team-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffd766;
+}
+
+.countdown-number {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 8px 30px rgba(255, 215, 102, 0.4);
+}
+
+/* ===================== Card Game Screen ===================== */
+#screen-cardgame {
+  flex: 1;
+}
+
+.cardgame-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px 22px;
+  gap: 14px;
+  min-height: 0;
+}
+
+.cardgame-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardgame-timer {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  min-width: 84px;
+}
+
+.cardgame-timer.timer-warning {
+  color: #ff8f7a;
+}
+
+.cardgame-stats {
+  display: flex;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.stat-pill {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stat-net {
+  color: #ffd766;
+}
+
+.word-card {
+  flex: 1;
+  background: linear-gradient(160deg, #16324f, #0e2338);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  min-height: 0;
+}
+
+.word-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.word-item {
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #93a9c2;
+  opacity: 0.55;
+  transition: all 0.2s ease;
+}
+
+.word-item.active {
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #0c1f33;
+  background: linear-gradient(180deg, #ffe28a, #ffd766);
+  opacity: 1;
+  padding: 20px 12px;
+  box-shadow: 0 10px 30px rgba(255, 215, 102, 0.35);
+}
+
+.word-item.done {
+  text-decoration: line-through;
+  opacity: 0.3;
+}
+
+.cardgame-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ===================== Round Summary ===================== */
+.summary-team-name {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffd766;
+}
+
+.summary-edit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-positions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.summary-position-box {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.summary-position-label {
+  font-size: 0.8rem;
+  color: #b9cbe0;
+  margin-bottom: 6px;
+}
+
+.summary-position-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.summary-position-arrow {
+  font-size: 1.4rem;
+  color: #ffd766;
+}
+
+/* ===================== Victory ===================== */
+.victory-inner {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.victory-emoji {
+  font-size: 5rem;
+}
+
+.victory-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffd766;
+  margin: 0;
+}
+
+.victory-sub {
+  font-size: 1.05rem;
+  color: #dbe8f7;
+  margin-bottom: 20px;
+}
+
+/* ===================== Small screens ===================== */
+@media (max-height: 640px) {
+  .countdown-number {
+    font-size: 6rem;
+  }
+  .word-item.active {
+    font-size: 1.5rem;
+    padding: 14px 10px;
+  }
+}
