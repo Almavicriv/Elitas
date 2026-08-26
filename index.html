@@ -37,14 +37,30 @@
 
   <!-- ===================== SPLASH SCREEN ===================== -->
   <section id="screen-splash" class="screen active">
+    <svg class="splash-tower-bg" viewBox="0 0 200 320" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <g fill="#1e6fb8">
+        <line x1="76" y1="0" x2="76" y2="46" stroke="#1e6fb8" stroke-width="6"/>
+        <line x1="100" y1="10" x2="100" y2="46" stroke="#1e6fb8" stroke-width="6"/>
+        <path d="M52,46 L124,46 L112,92 L64,92 Z"/>
+        <rect x="68" y="58" width="12" height="20" fill="#eaf6ff"/>
+        <rect x="100" y="58" width="12" height="20" fill="#eaf6ff"/>
+        <path d="M58,92 L118,92 L108,128 L68,128 Z"/>
+        <rect x="78" y="128" width="20" height="230"/>
+      </g>
+    </svg>
+
+    <img id="iaf-emblem" class="splash-emblem splash-emblem-left hidden" alt="סמל חיל האוויר">
+    <img id="unit-emblem" class="splash-emblem splash-emblem-right" src="assets/unit-emblem.png" alt="סמל היחידה">
+
     <div class="screen-inner splash-inner">
-      <img class="splash-logo" src="icons/icon-512.png" alt="אליטס">
-      <h1 class="splash-title">אליטס</h1>
-      <div class="splash-subtitle">משחק מילים בסגנון אליאס לחיל האוויר</div>
-      <div class="splash-credit">פותח ע"י יחידת שה"ד 339</div>
-      <button id="splash-continue-btn" class="btn btn-primary btn-large">התחל</button>
+      <div class="splash-text-block">
+        <h1 class="splash-alias-title">אליטס</h1>
+        <div class="splash-subtitle">משחק מילים בסגנון אליאס לחיל האוויר</div>
+        <div class="splash-motivation">מוכנים להמריא לניצחון? 🛫</div>
+        <div class="splash-credit">פותח ע"י יחידת שה"ד 339</div>
+      </div>
+      <button id="splash-continue-btn" class="btn btn-primary btn-large splash-bottom-btn">התחל</button>
     </div>
-    <img id="unit-emblem" class="splash-unit-emblem hidden" src="" alt="סמל היחידה">
   </section>
 
   <!-- ===================== SETTINGS SCREEN ===================== -->
