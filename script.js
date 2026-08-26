@@ -142,6 +142,14 @@
     playTone(220, 550, "sawtooth");
   }
 
+  function playCountdownBeep() {
+    playTone(523, 150, "sine");
+  }
+
+  function playCountdownGo() {
+    playTone(659, 260, "sine");
+  }
+
   function vibrate(pattern) {
     try {
       if (navigator.vibrate) navigator.vibrate(pattern);
@@ -538,12 +546,14 @@
     var n = 3;
     $("countdown-number").textContent = String(n);
     showScreen("countdown");
+    playCountdownBeep();
     clearInterval(countdownIntervalId);
     countdownIntervalId = setInterval(function () {
       n--;
       if (n <= 0) {
         clearInterval(countdownIntervalId);
         countdownIntervalId = null;
+        playCountdownGo();
         if (isBonus) {
           startBonusRound();
         } else {
@@ -551,6 +561,7 @@
         }
       } else {
         $("countdown-number").textContent = String(n);
+        playCountdownBeep();
       }
     }, 1000);
   }
@@ -654,29 +665,38 @@
   function onCorrect() {
     withUiLock(function () {
       var g = state.game;
-      if (!g.round || g.round.timeLeft <= 0) return;
+      if (!g.round) return;
+      var timeWasUp = g.round.timeLeft <= 0;
       g.round.correct++;
       advanceWord();
-      renderCardGame();
-      saveState();
+      if (timeWasUp) {
+        goToSummary();
+      } else {
+        renderCardGame();
+        saveState();
+      }
     });
   }
 
   function onSkip() {
     withUiLock(function () {
       var g = state.game;
-      if (!g.round || g.round.timeLeft <= 0) return;
+      if (!g.round) return;
+      var timeWasUp = g.round.timeLeft <= 0;
       g.round.skipped++;
       advanceWord();
-      renderCardGame();
-      saveState();
+      if (timeWasUp) {
+        goToSummary();
+      } else {
+        renderCardGame();
+        saveState();
+      }
     });
   }
 
   function onTimeUp() {
     playBuzzer();
     vibrate([120, 60, 200]);
-    setCardButtonsEnabled(false);
     $("steal-btn").classList.remove("hidden");
     saveState();
   }
