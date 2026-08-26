@@ -843,14 +843,14 @@ body.on-splash .app-header {
 }
 
 .splash-subtitle {
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1e6fb8;
   max-width: 320px;
 }
 
 .splash-motivation {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #b8790f;
 }
@@ -858,11 +858,11 @@ body.on-splash .app-header {
 .splash-credit {
   font-size: 0.85rem;
   color: #3f6c92;
+  opacity: 0.5;
+  text-align: center;
+  margin-bottom: 8px;
 }
 
-.splash-bottom-btn {
-  margin-top: auto;
-}
 
 .splash-emblem {
   position: absolute;
