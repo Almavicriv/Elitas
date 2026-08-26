@@ -76,7 +76,6 @@ input[type="number"] {
   font-size: 1.6rem;
   color: #1e6fb8;
   opacity: 0.5;
-  transform: scaleX(-1);
   animation: fly-across 26s linear infinite;
 }
 
@@ -86,10 +85,10 @@ input[type="number"] {
 }
 
 @keyframes fly-across {
-  0% { transform: translateX(0) scaleX(-1); opacity: 0; }
+  0% { transform: translateX(0); opacity: 0; }
   8% { opacity: 0.5; }
   92% { opacity: 0.5; }
-  100% { transform: translateX(130vw) scaleX(-1); opacity: 0; }
+  100% { transform: translateX(130vw); opacity: 0; }
 }
 
 /* ===================== Header ===================== */
@@ -250,6 +249,19 @@ body.hide-header-ingame .app-header {
   color: #23150a;
 }
 
+.btn-danger {
+  background: linear-gradient(180deg, #ff8f7a, #e6503a);
+  color: #ffffff;
+}
+
+.btn-outline-danger {
+  width: 100%;
+  background: transparent;
+  color: #e6503a;
+  border: 1px solid rgba(230, 80, 58, 0.4);
+  padding: 12px;
+}
+
 .hidden {
   display: none !important;
 }
@@ -368,22 +380,14 @@ body.hide-header-ingame .app-header {
   stroke-dasharray: 1 8;
 }
 
-.spiral-dot {
-  fill: #ffffff;
-  stroke: #7fb8de;
-  stroke-width: 1;
+.spiral-progress-trail {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 6;
 }
 
-.spiral-dot-major {
-  fill: #ffd766;
-  stroke: #f2b632;
-  stroke-width: 1;
-}
-
-.spiral-step-label {
-  font-size: 7px;
-  font-weight: 700;
-  fill: #3f6c92;
+.spiral-special-icon {
+  font-size: 15px;
 }
 
 .spiral-start-icon {
@@ -397,7 +401,7 @@ body.hide-header-ingame .app-header {
 
 .track-pawn {
   stroke: #ffffff;
-  stroke-width: 2;
+  stroke-width: 2.5;
   transition: cx 0.4s ease, cy 0.4s ease;
 }
 
@@ -498,6 +502,22 @@ body.hide-header-ingame .app-header {
   text-align: center;
   margin: 0;
   color: #12518f;
+}
+
+.modal-text {
+  font-size: 0.95rem;
+  color: #3f6c92;
+  text-align: center;
+  margin: 0;
+}
+
+.modal-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-btn-row .btn {
+  flex: 1;
 }
 
 .team-pick-list {
@@ -623,101 +643,61 @@ body.hide-header-ingame .app-header {
   border: 1px solid rgba(30, 111, 184, 0.15);
   border-radius: 22px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 14px;
   min-height: 0;
   box-shadow: 0 10px 30px rgba(30, 111, 184, 0.1);
 }
 
-.active-number-hint {
+.active-word {
   text-align: center;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #3f6c92;
-  margin-bottom: 8px;
-}
-
-.active-number-hint span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #ffd766;
-  color: #23150a;
-  font-weight: 800;
-  margin-inline-start: 4px;
-}
-
-.word-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  flex: 1;
-  justify-content: center;
-}
-
-.word-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  transition: all 0.2s ease;
-}
-
-.word-number {
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.95rem;
-  background: #e4f0fa;
-  color: #1e6fb8;
-  border: 1px solid #bcdcf2;
-}
-
-.word-text {
-  flex: 1;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #8fa9c2;
-}
-
-.word-row.active {
-  background: linear-gradient(180deg, #fff6df, #ffe28a);
-  box-shadow: 0 8px 22px rgba(242, 182, 50, 0.3);
-}
-
-.word-row.active .word-number {
-  background: #23150a;
-  color: #ffd766;
-  border-color: #23150a;
-}
-
-.word-row.active .word-text {
-  font-size: 1.6rem;
+  font-size: clamp(2rem, 9vw, 3.2rem);
   font-weight: 900;
-  color: #23150a;
-}
-
-.word-row.done {
-  opacity: 0.35;
-}
-
-.word-row.done .word-text {
-  text-decoration: line-through;
+  color: #12518f;
+  word-break: break-word;
 }
 
 .cardgame-actions {
   display: flex;
   gap: 12px;
+}
+
+.bonus-banner {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #b8790f;
+  background: rgba(255, 215, 102, 0.35);
+  border: 1px solid rgba(242, 182, 50, 0.4);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.bonus-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bonus-team-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bonus-team-btn {
+  padding: 18px 10px;
+  border-radius: 16px;
+  border: none;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.bonus-team-btn:active {
+  transform: scale(0.97);
 }
 
 /* ===================== Round Summary ===================== */
@@ -767,6 +747,29 @@ body.hide-header-ingame .app-header {
   color: #1e6fb8;
 }
 
+/* ===================== Bonus Round Summary ===================== */
+.bonus-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bonus-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(30, 111, 184, 0.15);
+  font-weight: 700;
+}
+
+.bonus-summary-row .bonus-summary-gain {
+  color: #2fb45a;
+  font-weight: 800;
+}
+
 /* ===================== Victory ===================== */
 .victory-inner {
   flex: 1;
@@ -798,7 +801,7 @@ body.hide-header-ingame .app-header {
   .countdown-number {
     font-size: 6rem;
   }
-  .word-row.active .word-text {
-    font-size: 1.3rem;
+  .active-word {
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
   }
 }

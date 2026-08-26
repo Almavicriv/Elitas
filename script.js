@@ -12,7 +12,7 @@
     "סיירת המילים",
   ];
   var DEFAULT_STEPS = { 2: 40, 3: 35, 4: 30 };
-  var STORAGE_KEY = "elitas_game_state_v2";
+  var STORAGE_KEY = "elitas_game_state_v3";
   var CARD_SIZE = 5;
   var UI_LOCK_MS = 220;
   var SVG_NS = "http://www.w3.org/2000/svg";
@@ -21,6 +21,8 @@
   var SPIRAL_R_MAX = 145;
   var SPIRAL_R_MIN = 22;
   var SPIRAL_STEPS_PER_TURN = 9;
+  var SPECIAL_SQUARE_GAP_MIN = 4;
+  var SPECIAL_SQUARE_GAP_SPAN = 2; // gap is MIN..MIN+SPAN-1 (4 or 5)
 
   // ===================== State =====================
   var state = {
@@ -39,6 +41,7 @@
   var countdownIntervalId = null;
   var uiLocked = false;
   var pendingStartAfterHelp = false;
+  var pendingBonusOriginTeam = null;
   var audioCtx = null;
 
   // ===================== Utilities =====================
@@ -235,6 +238,17 @@
     saveState();
   }
 
+  // ===================== Special squares =====================
+  function generateSpecialSquares(winSteps) {
+    var squares = [];
+    var pos = SPECIAL_SQUARE_GAP_MIN + Math.floor(Math.random() * SPECIAL_SQUARE_GAP_SPAN);
+    while (pos < winSteps) {
+      squares.push(pos);
+      pos += SPECIAL_SQUARE_GAP_MIN + Math.floor(Math.random() * SPECIAL_SQUARE_GAP_SPAN);
+    }
+    return squares;
+  }
+
   // ===================== Game init =====================
   function startNewGame() {
     var s = state.settings;
@@ -254,8 +268,10 @@
       deck: buildDeck(shuffle(WORDS)),
       usedWords: [],
       currentCard: null,
-      usedSlots: null,
+      currentWordIndex: 0,
+      specialSquares: generateSpecialSquares(s.winSteps),
       round: null,
+      bonusRound: null,
     };
 
     saveState();
@@ -263,9 +279,7 @@
     openModal("modal-help");
   }
 
-  // ===================== Deck / numbered-card flow (real-Alias style) =====================
-  // Every card has up to 5 numbered words (1-5). During a round, only the word whose
-  // number matches the team's current live board position (mod 5) may be read aloud.
+  // ===================== Deck / word flow =====================
   function loadNextCard() {
     var g = state.game;
     if (g.deck.length === 0) {
@@ -277,40 +291,24 @@
       }
     }
     g.currentCard = g.deck.shift();
-    g.usedSlots = g.currentCard.map(function () {
-      return false;
-    });
+    g.currentWordIndex = 0;
   }
 
-  function abandonCurrentCard() {
+  function ensureCurrentCard() {
     var g = state.game;
-    if (g.currentCard) {
-      for (var i = 0; i < g.currentCard.length; i++) {
-        if (!g.usedSlots[i]) g.usedWords.push(g.currentCard[i]);
-      }
-    }
-    g.currentCard = null;
-    g.usedSlots = null;
-  }
-
-  function ensureCardForSlot(slot) {
-    var g = state.game;
-    var attempts = 0;
-    while ((!g.currentCard || slot >= g.currentCard.length || g.usedSlots[slot]) && attempts < 500) {
-      abandonCurrentCard();
+    if (!g.currentCard || g.currentWordIndex >= g.currentCard.length) {
       loadNextCard();
-      attempts++;
     }
   }
 
-  function currentLivePosition() {
+  function advanceWord() {
     var g = state.game;
-    var r = g.round;
-    return clamp(r.startPosition + (r.correct - r.skipped), 0, g.winSteps);
-  }
-
-  function currentActiveSlot() {
-    return currentLivePosition() % CARD_SIZE;
+    var word = g.currentCard[g.currentWordIndex];
+    g.usedWords.push(word);
+    g.currentWordIndex++;
+    if (g.currentWordIndex >= g.currentCard.length) {
+      loadNextCard();
+    }
   }
 
   // ===================== Spiral board geometry =====================
@@ -336,7 +334,7 @@
     svg.innerHTML = "";
     var points = computeSpiralPoints(g.winSteps);
 
-    var d =
+    var fullD =
       "M " +
       points
         .map(function (p) {
@@ -344,29 +342,37 @@
         })
         .join(" L ");
 
-    svg.appendChild(svgEl("path", { d: d, class: "spiral-path-bg" }));
-    svg.appendChild(svgEl("path", { d: d, class: "spiral-path" }));
+    svg.appendChild(svgEl("path", { d: fullD, class: "spiral-path-bg" }));
+    svg.appendChild(svgEl("path", { d: fullD, class: "spiral-path" }));
 
-    points.forEach(function (p, i) {
-      var major = i % 5 === 0 || i === points.length - 1;
+    // Per-team progress trail: a colored line from the start to each team's current spot.
+    g.teams.forEach(function (team) {
+      var pos = clamp(team.position, 0, g.winSteps);
+      if (pos === 0) return;
+      var trailPoints = points.slice(0, pos + 1);
+      var trailD =
+        "M " +
+        trailPoints
+          .map(function (p) {
+            return p.x.toFixed(1) + "," + p.y.toFixed(1);
+          })
+          .join(" L ");
       svg.appendChild(
-        svgEl("circle", {
-          cx: p.x.toFixed(1),
-          cy: p.y.toFixed(1),
-          r: major ? 5 : 2.6,
-          class: "spiral-dot" + (major ? " spiral-dot-major" : ""),
-        })
+        svgEl("path", { d: trailD, class: "spiral-progress-trail", stroke: team.color, opacity: "0.55" })
       );
-      if (major) {
-        var label = svgEl("text", {
-          x: p.x.toFixed(1),
-          y: (p.y - 8).toFixed(1),
-          class: "spiral-step-label",
-          "text-anchor": "middle",
-        });
-        label.textContent = String(i);
-        svg.appendChild(label);
-      }
+    });
+
+    // Special "bonus" squares.
+    g.specialSquares.forEach(function (idx) {
+      var p = points[idx];
+      var icon = svgEl("text", {
+        x: p.x.toFixed(1),
+        y: (p.y + 5).toFixed(1),
+        class: "spiral-special-icon",
+        "text-anchor": "middle",
+      });
+      icon.textContent = "🎁";
+      svg.appendChild(icon);
     });
 
     var startIcon = svgEl("text", {
@@ -388,12 +394,13 @@
     finishIcon.textContent = "🏁";
     svg.appendChild(finishIcon);
 
+    // Pawns mark only each team's current (last) space.
     g.teams.forEach(function (team, idx) {
       var p = points[clamp(team.position, 0, g.winSteps)];
       var circle = svgEl("circle", {
         cx: p.x.toFixed(1),
         cy: p.y.toFixed(1),
-        r: 9,
+        r: 10,
         class: "track-pawn",
         fill: team.color,
       });
@@ -493,24 +500,41 @@
     }, 650);
   }
 
+  // ===================== End game mid-way =====================
+  function endGameNow() {
+    clearInterval(timerIntervalId);
+    clearInterval(countdownIntervalId);
+    timerIntervalId = null;
+    countdownIntervalId = null;
+    state.game = null;
+    renderSettings();
+    showScreen("settings");
+  }
+
   // ===================== Round flow =====================
   function beginRound(teamIndex) {
     var g = state.game;
-    abandonCurrentCard();
-    g.round = {
-      teamIndex: teamIndex,
-      correct: 0,
-      skipped: 0,
-      startPosition: g.teams[teamIndex].position,
-    };
+    var startPos = g.teams[teamIndex].position;
+    if (g.specialSquares.indexOf(startPos) !== -1) {
+      pendingBonusOriginTeam = teamIndex;
+      g.round = null;
+    } else {
+      pendingBonusOriginTeam = null;
+      g.round = {
+        teamIndex: teamIndex,
+        correct: 0,
+        skipped: 0,
+        startPosition: startPos,
+      };
+    }
     saveState();
-    startCountdown();
+    startCountdown(teamIndex, pendingBonusOriginTeam !== null);
   }
 
-  function startCountdown() {
+  function startCountdown(teamIndex, isBonus) {
     var g = state.game;
-    var team = g.teams[g.round.teamIndex];
-    $("countdown-team-name").textContent = team.name;
+    var team = g.teams[teamIndex];
+    $("countdown-team-name").textContent = isBonus ? "🎁 סיבוב מיוחד לכולם!" : team.name;
     var n = 3;
     $("countdown-number").textContent = String(n);
     showScreen("countdown");
@@ -520,7 +544,11 @@
       if (n <= 0) {
         clearInterval(countdownIntervalId);
         countdownIntervalId = null;
-        startCardGame();
+        if (isBonus) {
+          startBonusRound();
+        } else {
+          startCardGame();
+        }
       } else {
         $("countdown-number").textContent = String(n);
       }
@@ -528,7 +556,7 @@
   }
 
   function startCardGame() {
-    ensureCardForSlot(currentActiveSlot());
+    ensureCurrentCard();
     renderCardGame();
     $("steal-btn").classList.add("hidden");
     setCardButtonsEnabled(true);
@@ -538,34 +566,41 @@
 
   function renderCardGame() {
     var g = state.game;
-    var activeSlot = currentActiveSlot();
-    $("active-number-badge").textContent = String(activeSlot + 1);
+    var bonus = !!g.bonusRound;
 
-    var wordList = $("word-list");
-    wordList.innerHTML = "";
-    g.currentCard.forEach(function (word, idx) {
-      var row = document.createElement("div");
-      row.className = "word-row";
-      if (idx === activeSlot) row.classList.add("active");
-      else if (g.usedSlots[idx]) row.classList.add("done");
+    $("active-word").textContent = g.currentCard[g.currentWordIndex];
 
-      var numberEl = document.createElement("div");
-      numberEl.className = "word-number";
-      numberEl.textContent = String(idx + 1);
-      row.appendChild(numberEl);
+    $("cardgame-top-normal").classList.toggle("hidden", bonus);
+    $("bonus-banner").classList.toggle("hidden", !bonus);
+    $("normal-actions").classList.toggle("hidden", bonus);
+    $("bonus-actions").classList.toggle("hidden", !bonus);
+    if (bonus) $("steal-btn").classList.add("hidden");
 
-      var textEl = document.createElement("div");
-      textEl.className = "word-text";
-      textEl.textContent = word;
-      row.appendChild(textEl);
+    if (bonus) {
+      renderBonusButtons();
+    } else {
+      $("stat-correct").textContent = "✔ " + g.round.correct;
+      $("stat-skipped").textContent = "⤼ " + g.round.skipped;
+      var net = g.round.correct - g.round.skipped;
+      $("stat-net").textContent = (net > 0 ? "+" : "") + net;
+    }
+  }
 
-      wordList.appendChild(row);
+  function renderBonusButtons() {
+    var g = state.game;
+    var wrap = $("bonus-team-buttons");
+    wrap.innerHTML = "";
+    g.teams.forEach(function (team, idx) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "bonus-team-btn";
+      btn.style.background = team.color;
+      btn.textContent = team.name;
+      btn.addEventListener("click", function () {
+        onBonusPick(idx);
+      });
+      wrap.appendChild(btn);
     });
-
-    $("stat-correct").textContent = "✔ " + g.round.correct;
-    $("stat-skipped").textContent = "⤼ " + g.round.skipped;
-    var net = g.round.correct - g.round.skipped;
-    $("stat-net").textContent = (net > 0 ? "+" : "") + net;
   }
 
   function setCardButtonsEnabled(enabled) {
@@ -616,21 +651,12 @@
     }, UI_LOCK_MS);
   }
 
-  function markSlotUsedAndAdvance(slot, delta) {
-    var g = state.game;
-    g.usedWords.push(g.currentCard[slot]);
-    g.usedSlots[slot] = true;
-    if (delta > 0) g.round.correct++;
-    else g.round.skipped++;
-    var nextSlot = currentActiveSlot();
-    ensureCardForSlot(nextSlot);
-  }
-
   function onCorrect() {
     withUiLock(function () {
       var g = state.game;
       if (!g.round || g.round.timeLeft <= 0) return;
-      markSlotUsedAndAdvance(currentActiveSlot(), 1);
+      g.round.correct++;
+      advanceWord();
       renderCardGame();
       saveState();
     });
@@ -640,7 +666,8 @@
     withUiLock(function () {
       var g = state.game;
       if (!g.round || g.round.timeLeft <= 0) return;
-      markSlotUsedAndAdvance(currentActiveSlot(), -1);
+      g.round.skipped++;
+      advanceWord();
       renderCardGame();
       saveState();
     });
@@ -675,28 +702,140 @@
 
   function awardSteal(teamIndex) {
     var g = state.game;
-    var slot = currentActiveSlot();
-    g.usedWords.push(g.currentCard[slot]);
-    g.usedSlots[slot] = true;
+    var word = g.currentCard[g.currentWordIndex];
+    g.usedWords.push(word);
 
     var team = g.teams[teamIndex];
     team.position = clamp(team.position + 1, 0, g.winSteps);
     saveState();
 
     if (team.position >= g.winSteps) {
+      finishActiveWordAfterSteal();
       showVictory(teamIndex);
       return;
     }
+    finishActiveWordAfterSteal();
     goToSummary();
+  }
+
+  function finishActiveWordAfterSteal() {
+    var g = state.game;
+    g.currentWordIndex++;
+    if (g.currentWordIndex >= g.currentCard.length) {
+      loadNextCard();
+    }
   }
 
   function noOneStole() {
     var g = state.game;
-    var slot = currentActiveSlot();
-    g.usedWords.push(g.currentCard[slot]);
-    g.usedSlots[slot] = true;
+    var word = g.currentCard[g.currentWordIndex];
+    g.usedWords.push(word);
+    g.currentWordIndex++;
+    if (g.currentWordIndex >= g.currentCard.length) {
+      loadNextCard();
+    }
     saveState();
     goToSummary();
+  }
+
+  // ===================== Bonus round flow (special squares) =====================
+  function startBonusRound() {
+    var g = state.game;
+    ensureCurrentCard();
+    g.bonusRound = {
+      originTeamIndex: pendingBonusOriginTeam,
+      gains: g.teams.map(function () {
+        return 0;
+      }),
+      wordsResolved: 0,
+      totalWords: g.currentCard.length,
+    };
+    pendingBonusOriginTeam = null;
+    renderCardGame();
+    showScreen("cardgame");
+    saveState();
+  }
+
+  function onBonusPick(teamIndex) {
+    withUiLock(function () {
+      resolveBonusWord(teamIndex);
+    });
+  }
+
+  function onBonusSkip() {
+    withUiLock(function () {
+      resolveBonusWord(null);
+    });
+  }
+
+  function resolveBonusWord(teamIndex) {
+    var g = state.game;
+    var br = g.bonusRound;
+    if (!br) return;
+    var word = g.currentCard[g.currentWordIndex];
+    g.usedWords.push(word);
+
+    if (teamIndex !== null) {
+      var team = g.teams[teamIndex];
+      team.position = clamp(team.position + 1, 0, g.winSteps);
+      br.gains[teamIndex]++;
+      if (team.position >= g.winSteps) {
+        g.bonusRound = null;
+        saveState();
+        showVictory(teamIndex);
+        return;
+      }
+    }
+
+    br.wordsResolved++;
+    g.currentWordIndex++;
+    if (g.currentWordIndex >= g.currentCard.length) {
+      loadNextCard();
+    }
+    saveState();
+
+    if (br.wordsResolved >= br.totalWords) {
+      goToBonusSummary();
+    } else {
+      renderCardGame();
+    }
+  }
+
+  function goToBonusSummary() {
+    var g = state.game;
+    var br = g.bonusRound;
+    var list = $("bonus-summary-list");
+    list.innerHTML = "";
+    var anyGain = false;
+    g.teams.forEach(function (team, idx) {
+      var gain = br.gains[idx];
+      if (gain <= 0) return;
+      anyGain = true;
+      var row = document.createElement("div");
+      row.className = "bonus-summary-row";
+      var nameSpan = document.createElement("span");
+      nameSpan.textContent = team.name;
+      var gainSpan = document.createElement("span");
+      gainSpan.className = "bonus-summary-gain";
+      gainSpan.textContent = "+" + gain;
+      row.appendChild(nameSpan);
+      row.appendChild(gainSpan);
+      list.appendChild(row);
+    });
+    if (!anyGain) {
+      var empty = document.createElement("div");
+      empty.className = "bonus-summary-row";
+      empty.textContent = "אף אחת מהקבוצות לא ניחשה במחזור המיוחד הזה.";
+      list.appendChild(empty);
+    }
+    showScreen("bonus-summary");
+    saveState();
+  }
+
+  function onBonusSummaryContinue() {
+    state.game.bonusRound = null;
+    saveState();
+    goToBoard();
   }
 
   // ===================== Round summary =====================
@@ -734,7 +873,6 @@
     var g = state.game;
     var team = g.teams[g.round.teamIndex];
     g.round = null;
-    abandonCurrentCard();
     saveState();
     if (team.position >= g.winSteps) {
       showVictory(g.teams.indexOf(team));
@@ -791,8 +929,18 @@
           goToBoard();
         }
         break;
+      case "bonus-summary":
+        if (state.game.bonusRound) {
+          renderBoard();
+          goToBonusSummary();
+        } else {
+          goToBoard();
+        }
+        break;
       case "cardgame":
-        if (state.game.round && state.game.currentCard && state.game.round.timeLeft > 0) {
+        if (state.game.bonusRound && state.game.currentCard) {
+          resumeBonusRound();
+        } else if (state.game.round && state.game.currentCard && state.game.round.timeLeft > 0) {
           resumeCardGame();
         } else {
           goToBoard();
@@ -840,6 +988,11 @@
     timerIntervalId = setInterval(timerTick, 1000);
   }
 
+  function resumeBonusRound() {
+    renderCardGame();
+    showScreen("cardgame");
+  }
+
   // ===================== Event wiring =====================
   function wireEvents() {
     document.querySelectorAll("#team-count-selector .segmented-btn").forEach(function (btn) {
@@ -873,6 +1026,17 @@
     $("start-round-btn").addEventListener("click", openTeamPickModal);
     $("random-team-btn").addEventListener("click", randomTeamPick);
 
+    $("end-game-btn").addEventListener("click", function () {
+      openModal("modal-end-game");
+    });
+    $("end-game-cancel-btn").addEventListener("click", function () {
+      closeModal("modal-end-game");
+    });
+    $("end-game-confirm-btn").addEventListener("click", function () {
+      closeModal("modal-end-game");
+      endGameNow();
+    });
+
     $("correct-btn").addEventListener("click", onCorrect);
     $("skip-btn").addEventListener("click", onSkip);
     $("steal-btn").addEventListener("click", openStealModal);
@@ -880,6 +1044,7 @@
       closeModal("modal-steal-pick");
       noOneStole();
     });
+    $("bonus-skip-btn").addEventListener("click", onBonusSkip);
 
     $("summary-correct-input").addEventListener("input", updateSummaryFromInputs);
     $("summary-skipped-input").addEventListener("input", updateSummaryFromInputs);
@@ -904,6 +1069,8 @@
       updateSummaryFromInputs();
     });
     $("summary-continue-btn").addEventListener("click", onSummaryContinue);
+
+    $("bonus-summary-continue-btn").addEventListener("click", onBonusSummaryContinue);
 
     $("new-game-btn").addEventListener("click", startNewGameFromVictory);
 

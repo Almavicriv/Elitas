@@ -74,6 +74,7 @@
       </div>
       <div id="board-teams-list" class="board-teams-list"></div>
       <button id="start-round-btn" class="btn btn-primary btn-large">התחל סיבוב</button>
+      <button id="end-game-btn" class="btn btn-outline-danger">סיים משחק</button>
     </div>
   </section>
 
@@ -83,6 +84,18 @@
       <h2 class="modal-title">איזו קבוצה מתחילה?</h2>
       <div id="team-pick-list" class="team-pick-list"></div>
       <button id="random-team-btn" class="btn btn-secondary btn-large">בחירה אקראית 🎲</button>
+    </div>
+  </div>
+
+  <!-- ===================== END GAME CONFIRM MODAL ===================== -->
+  <div id="modal-end-game" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 class="modal-title">לסיים את המשחק?</h2>
+      <p class="modal-text">כל ההתקדמות של המשחק הנוכחי תימחק ותחזרו למסך ההגדרות.</p>
+      <div class="modal-btn-row">
+        <button id="end-game-cancel-btn" class="btn btn-secondary">ביטול</button>
+        <button id="end-game-confirm-btn" class="btn btn-danger">כן, סיים משחק</button>
+      </div>
     </div>
   </div>
 
@@ -97,7 +110,7 @@
   <!-- ===================== CARD GAME SCREEN ===================== -->
   <section id="screen-cardgame" class="screen">
     <div class="cardgame-inner">
-      <div class="cardgame-top">
+      <div class="cardgame-top" id="cardgame-top-normal">
         <div id="cardgame-timer" class="cardgame-timer">60</div>
         <div class="cardgame-stats">
           <span id="stat-correct" class="stat-pill stat-correct">✔ 0</span>
@@ -106,14 +119,20 @@
         </div>
       </div>
 
+      <div id="bonus-banner" class="bonus-banner hidden">🎁 סיבוב מיוחד — כולם יכולים לנחש, בלי טיימר!</div>
+
       <div id="word-card" class="word-card">
-        <div class="active-number-hint">התיאור על מספר <span id="active-number-badge">1</span></div>
-        <div class="word-list" id="word-list"></div>
+        <div class="active-word" id="active-word"></div>
       </div>
 
-      <div class="cardgame-actions">
+      <div class="cardgame-actions" id="normal-actions">
         <button id="skip-btn" class="btn btn-skip btn-huge">דילוג</button>
         <button id="correct-btn" class="btn btn-correct btn-huge">נכון</button>
+      </div>
+
+      <div class="bonus-actions hidden" id="bonus-actions">
+        <div id="bonus-team-buttons" class="bonus-team-buttons"></div>
+        <button id="bonus-skip-btn" class="btn btn-skip btn-large">דילוג</button>
       </div>
 
       <button id="steal-btn" class="btn btn-steal hidden">קבוצה אחרת ניחשה</button>
@@ -169,6 +188,15 @@
     </div>
   </section>
 
+  <!-- ===================== BONUS ROUND SUMMARY SCREEN ===================== -->
+  <section id="screen-bonus-summary" class="screen">
+    <div class="screen-inner">
+      <h1 class="screen-title">🎁 סיכום הסיבוב המיוחד</h1>
+      <div id="bonus-summary-list" class="bonus-summary-list"></div>
+      <button id="bonus-summary-continue-btn" class="btn btn-primary btn-large">המשך</button>
+    </div>
+  </section>
+
   <!-- ===================== VICTORY SCREEN ===================== -->
   <section id="screen-victory" class="screen">
     <div class="screen-inner victory-inner">
@@ -187,12 +215,13 @@
     <h2 class="modal-title">איך משחקים אליטס</h2>
     <ol class="help-list">
       <li><strong>הכנה</strong> — מחלקים ל-2–4 קבוצות. כל הקבוצות מתחילות בתחילת מסלול הספירלה.</li>
-      <li><strong>הקלפים</strong> — בכל קלף 5 מילים ממוספרות (1–5), בדיוק כמו באליאס האמיתי. תמיד קוראים רק את המילה שהמספר שלה תואם למספר המשבצת שהקבוצה נמצאת עליה במסלול — לא את שאר המילים בקלף.</li>
-      <li><strong>מהלך התור</strong> — שחקן אחד מתאר, חברו בקבוצה מנחש. יש טיימר אחד לתור. כשמילה נוחשת נכון עוברים למילה הבאה (לפי המספר החדש). אסור להגיד את המילה עצמה, חלקים ממנה, מילים מאותו שורש, או להשתמש בפנטומימה או שפות אחרות.</li>
+      <li><strong>הקלפים</strong> — בכל קלף 5 מילים. תמיד רואים רק מילה אחת בכל רגע — אי אפשר לראות את המילה הבאה עד שמגיעים אליה.</li>
+      <li><strong>מהלך התור</strong> — שחקן אחד מתאר, חברו בקבוצה מנחש. יש טיימר אחד לתור. כשמילה נוחשת נכון עוברים למילה הבאה. אסור להגיד את המילה עצמה, חלקים ממנה, מילים מאותו שורש, או להשתמש בפנטומימה או שפות אחרות.</li>
       <li><strong>ניקוד</strong> — מילה שנוחשה נכון = צעד אחד קדימה. דילוג על מילה = צעד אחד אחורה. טעות (אמירת המילה עצמה/חלק ממנה/מילה מאותו שורש) = צעד אחד אחורה — המנחה אחראי לעצור את הקבוצה.</li>
       <li><strong>המילה האחרונה</strong> — אם נגמר הזמן והמילה האחרונה לא נוחשה, כל הקבוצות יכולות לנחש. הקבוצה הראשונה שמנחשת נכון (המנחה בוחר ידנית) מקבלת את הנקודה עבור אותה מילה בלבד.</li>
+      <li><strong>משבצות מיוחדות 🎁</strong> — לאורך הלוח יש כמה משבצות מיוחדות. קבוצה שמתחילה תור ממשבצת כזו נכנסת לסיבוב מיוחד בלי טיימר: מציגים 5 מילים בזו אחר זו וכל הקבוצות יכולות לנחש בקול רם. המנחה לוחץ על שם הקבוצה שצדקה, או על "דילוג" אם אף אחד לא ניחש.</li>
       <li><strong>חילוף תפקידים</strong> — בכל תור חדש בתוך אותה קבוצה, המתאר והמנחש מתחלפים.</li>
-      <li><strong>ניצחון</strong> — הקבוצה הראשונה שמגיעה לסוף הלוח מנצחת.</li>
+      <li><strong>ניצחון</strong> — הקבוצה הראשונה שמגיעה לסוף הלוח מנצחת. אפשר גם לסיים את המשחק באמצע בכל רגע מהלוח.</li>
     </ol>
     <button id="help-close-btn" class="btn btn-primary btn-large">הבנתי, בואו נתחיל</button>
   </div>
