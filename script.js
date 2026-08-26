@@ -371,7 +371,7 @@
         class: "spiral-special-icon",
         "text-anchor": "middle",
       });
-      icon.textContent = "🎁";
+      icon.textContent = "⚠️";
       svg.appendChild(icon);
     });
 
@@ -534,7 +534,7 @@
   function startCountdown(teamIndex, isBonus) {
     var g = state.game;
     var team = g.teams[teamIndex];
-    $("countdown-team-name").textContent = isBonus ? "🎁 סיבוב מיוחד לכולם!" : team.name;
+    $("countdown-team-name").textContent = isBonus ? "⚠️ נחיתה על מלכודת — סיבוב פתוח לכולם!" : team.name;
     var n = 3;
     $("countdown-number").textContent = String(n);
     showScreen("countdown");
