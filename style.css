@@ -808,10 +808,10 @@ body.on-splash .app-header {
   bottom: 0;
   right: 50%;
   transform: translateX(50%);
-  width: 62%;
-  max-width: 260px;
+  width: 58%;
+  max-width: 240px;
   height: auto;
-  opacity: 0.25;
+  opacity: 0.35;
   pointer-events: none;
   z-index: 0;
 }
@@ -835,14 +835,11 @@ body.on-splash .app-header {
   text-align: center;
 }
 
-.splash-alias-title {
-  font-size: 3.2rem;
-  font-weight: 900;
-  color: #152f4d;
-  margin: 0;
-  -webkit-text-stroke: 5px #ffffff;
-  paint-order: stroke fill;
-  text-shadow: 0 8px 22px rgba(30, 111, 184, 0.25);
+.splash-title-img {
+  width: 78%;
+  max-width: 300px;
+  height: auto;
+  filter: drop-shadow(0 8px 18px rgba(30, 111, 184, 0.25));
 }
 
 .splash-subtitle {
