@@ -12,14 +12,15 @@ html, body {
 
 body {
   margin: 0;
-  font-family: "Segoe UI", "Arial Hebrew", "Rubik", Arial, sans-serif;
-  background: radial-gradient(circle at 50% 0%, #1b3a5c 0%, #0c1f33 55%, #060e18 100%);
-  color: #eef4fb;
+  font-family: "Rubik", "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+  background: linear-gradient(180deg, #f4fbff 0%, #dcf0fc 45%, #bfe3f7 100%);
+  color: #123a5e;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   direction: rtl;
   touch-action: manipulation;
+  position: relative;
 }
 
 button, input {
@@ -27,7 +28,68 @@ button, input {
 }
 
 input[type="number"] {
-  color: #0c1f33;
+  color: #123a5e;
+}
+
+/* ===================== Sky decoration ===================== */
+.sky-decor {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sky-decor .cloud {
+  position: absolute;
+  font-size: 3.4rem;
+  color: #ffffff;
+  opacity: 0.75;
+  filter: drop-shadow(0 2px 6px rgba(30, 111, 184, 0.12));
+}
+
+.cloud-1 {
+  top: 6%;
+  right: 8%;
+  font-size: 2.6rem;
+  animation: float-cloud 14s ease-in-out infinite;
+}
+
+.cloud-2 {
+  top: 20%;
+  left: 6%;
+  font-size: 3.8rem;
+  animation: float-cloud 18s ease-in-out infinite reverse;
+}
+
+.cloud-3 {
+  bottom: 12%;
+  right: 14%;
+  font-size: 2.2rem;
+  animation: float-cloud 16s ease-in-out infinite;
+}
+
+.plane-decor {
+  position: absolute;
+  top: 14%;
+  left: -10%;
+  font-size: 1.6rem;
+  color: #1e6fb8;
+  opacity: 0.5;
+  transform: scaleX(-1);
+  animation: fly-across 26s linear infinite;
+}
+
+@keyframes float-cloud {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(14px); }
+}
+
+@keyframes fly-across {
+  0% { transform: translateX(0) scaleX(-1); opacity: 0; }
+  8% { opacity: 0.5; }
+  92% { opacity: 0.5; }
+  100% { transform: translateX(130vw) scaleX(-1); opacity: 0; }
 }
 
 /* ===================== Header ===================== */
@@ -36,16 +98,19 @@ input[type="number"] {
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(6, 14, 24, 0.6);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(30, 111, 184, 0.15);
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .header-title {
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.5px;
-  color: #ffd766;
+  color: #12518f;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -53,6 +118,7 @@ input[type="number"] {
 
 .header-wings {
   font-size: 1rem;
+  color: #1e6fb8;
   transform: scaleX(-1);
   opacity: 0.9;
 }
@@ -61,16 +127,16 @@ input[type="number"] {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-  color: #eef4fb;
+  border: 1px solid rgba(30, 111, 184, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #12518f;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .help-btn:active {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 1);
 }
 
 body.hide-header-ingame .app-header {
@@ -84,6 +150,7 @@ body.hide-header-ingame .app-header {
   flex-direction: column;
   min-height: 0;
   position: relative;
+  z-index: 1;
 }
 
 .screen {
@@ -113,7 +180,7 @@ body.hide-header-ingame .app-header {
   font-weight: 800;
   text-align: center;
   margin: 4px 0 6px;
-  color: #ffffff;
+  color: #12518f;
 }
 
 /* ===================== Buttons ===================== */
@@ -125,7 +192,7 @@ body.hide-header-ingame .app-header {
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.08s ease, filter 0.15s ease;
-  color: #0c1f33;
+  color: #ffffff;
 }
 
 .btn:active {
@@ -138,15 +205,15 @@ body.hide-header-ingame .app-header {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, #ffd766, #f2b632);
-  color: #23150a;
-  box-shadow: 0 4px 14px rgba(242, 182, 50, 0.35);
+  background: linear-gradient(180deg, #3a9ee0, #1e6fb8);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(30, 111, 184, 0.35);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
-  color: #eef4fb;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.85);
+  color: #12518f;
+  border: 1px solid rgba(30, 111, 184, 0.3);
 }
 
 .btn-large {
@@ -179,8 +246,8 @@ body.hide-header-ingame .app-header {
 .btn-steal {
   margin-top: 14px;
   width: 100%;
-  background: linear-gradient(180deg, #9fd6ff, #4fa3e0);
-  color: #071c2e;
+  background: linear-gradient(180deg, #ffe28a, #f2b632);
+  color: #23150a;
 }
 
 .hidden {
@@ -197,7 +264,7 @@ body.hide-header-ingame .app-header {
 .field-label {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #b9cbe0;
+  color: #3f6c92;
 }
 
 .segmented {
@@ -209,17 +276,17 @@ body.hide-header-ingame .app-header {
   flex: 1;
   padding: 12px 6px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
-  color: #eef4fb;
+  border: 1px solid rgba(30, 111, 184, 0.25);
+  background: rgba(255, 255, 255, 0.75);
+  color: #12518f;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .segmented-btn.selected {
-  background: linear-gradient(180deg, #ffd766, #f2b632);
-  color: #23150a;
+  background: linear-gradient(180deg, #3a9ee0, #1e6fb8);
+  color: #ffffff;
   border-color: transparent;
 }
 
@@ -233,9 +300,9 @@ body.hide-header-ingame .app-header {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.94);
-  color: #0c1f33;
+  border: 1px solid rgba(30, 111, 184, 0.25);
+  background: #ffffff;
+  color: #123a5e;
   font-size: 1rem;
   font-weight: 600;
 }
@@ -251,8 +318,8 @@ body.hide-header-ingame .app-header {
   text-align: center;
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(30, 111, 184, 0.25);
+  background: #ffffff;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -261,65 +328,85 @@ body.hide-header-ingame .app-header {
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  color: #eef4fb;
+  border: 1px solid rgba(30, 111, 184, 0.25);
+  background: rgba(255, 255, 255, 0.8);
+  color: #12518f;
   font-size: 1.3rem;
   font-weight: 700;
   cursor: pointer;
   flex-shrink: 0;
 }
 
-/* ===================== Board Screen ===================== */
+/* ===================== Board Screen (spiral) ===================== */
 .board-track-wrap {
-  overflow-x: auto;
-  padding: 6px 0 14px;
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 10px;
 }
 
 .board-track {
-  position: relative;
-  height: 64px;
-  min-width: 100%;
-  background: linear-gradient(90deg, #16324f, #1e4568);
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  overflow: visible;
 }
 
-.board-track::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 4%;
-  left: 4%;
-  height: 4px;
-  transform: translateY(-50%);
-  background: repeating-linear-gradient(to left, rgba(255,255,255,0.35) 0 10px, transparent 10px 20px);
+.spiral-path-bg {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
 }
 
-.track-flag {
-  position: absolute;
-  left: 2%;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.4rem;
+.spiral-path {
+  fill: none;
+  stroke: #9fd2f2;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1 8;
+}
+
+.spiral-dot {
+  fill: #ffffff;
+  stroke: #7fb8de;
+  stroke-width: 1;
+}
+
+.spiral-dot-major {
+  fill: #ffd766;
+  stroke: #f2b632;
+  stroke-width: 1;
+}
+
+.spiral-step-label {
+  font-size: 7px;
+  font-weight: 700;
+  fill: #3f6c92;
+}
+
+.spiral-start-icon {
+  font-size: 15px;
+  fill: #1e6fb8;
+}
+
+.spiral-finish-icon {
+  font-size: 18px;
 }
 
 .track-pawn {
-  position: absolute;
-  top: 50%;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  transform: translate(50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
+  stroke: #ffffff;
+  stroke-width: 2;
+  transition: cx 0.4s ease, cy 0.4s ease;
+}
+
+.track-pawn-label {
+  font-size: 9px;
   font-weight: 800;
-  color: #ffffff;
-  border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  transition: right 0.4s ease;
+  fill: #ffffff;
+  pointer-events: none;
+  transition: x 0.4s ease, y 0.4s ease;
 }
 
 .board-teams-list {
@@ -334,8 +421,8 @@ body.hide-header-ingame .app-header {
   gap: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(30, 111, 184, 0.15);
 }
 
 .board-team-dot {
@@ -343,7 +430,8 @@ body.hide-header-ingame .app-header {
   height: 18px;
   border-radius: 50%;
   flex-shrink: 0;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(30, 111, 184, 0.2);
 }
 
 .board-team-name-editable {
@@ -355,23 +443,23 @@ body.hide-header-ingame .app-header {
 }
 
 .board-team-name-editable:active {
-  border-bottom-color: rgba(255, 255, 255, 0.5);
+  border-bottom-color: rgba(30, 111, 184, 0.4);
 }
 
 .board-team-name-input {
   flex: 1;
   padding: 8px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(30, 111, 184, 0.3);
   background: #fff;
-  color: #0c1f33;
+  color: #123a5e;
   font-weight: 700;
   font-size: 1rem;
 }
 
 .board-team-pos {
   font-size: 0.9rem;
-  color: #b9cbe0;
+  color: #3f6c92;
   font-weight: 700;
   min-width: 54px;
   text-align: left;
@@ -381,7 +469,7 @@ body.hide-header-ingame .app-header {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 9, 16, 0.72);
+  background: rgba(18, 58, 94, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -390,8 +478,8 @@ body.hide-header-ingame .app-header {
 }
 
 .modal-box {
-  background: #102944;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 1px solid rgba(30, 111, 184, 0.15);
   border-radius: 18px;
   padding: 20px;
   width: 100%;
@@ -401,7 +489,7 @@ body.hide-header-ingame .app-header {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(18, 58, 94, 0.25);
 }
 
 .modal-title {
@@ -409,6 +497,7 @@ body.hide-header-ingame .app-header {
   font-weight: 800;
   text-align: center;
   margin: 0;
+  color: #12518f;
 }
 
 .team-pick-list {
@@ -420,9 +509,9 @@ body.hide-header-ingame .app-header {
 .team-pick-btn {
   padding: 16px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  color: #eef4fb;
+  border: 1px solid rgba(30, 111, 184, 0.25);
+  background: #eef7fd;
+  color: #12518f;
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
@@ -432,8 +521,8 @@ body.hide-header-ingame .app-header {
 }
 
 .team-pick-btn.picked {
-  background: linear-gradient(180deg, #ffd766, #f2b632);
-  color: #23150a;
+  background: linear-gradient(180deg, #3a9ee0, #1e6fb8);
+  color: #ffffff;
 }
 
 /* ===================== Help popup ===================== */
@@ -445,11 +534,11 @@ body.hide-header-ingame .app-header {
   gap: 10px;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #dbe8f7;
+  color: #2c4e6d;
 }
 
 .help-list li::marker {
-  color: #ffd766;
+  color: #1e6fb8;
   font-weight: 800;
 }
 
@@ -465,15 +554,15 @@ body.hide-header-ingame .app-header {
 .countdown-team-name {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #ffd766;
+  color: #12518f;
 }
 
 .countdown-number {
   font-size: 8rem;
   font-weight: 900;
   line-height: 1;
-  color: #ffffff;
-  text-shadow: 0 8px 30px rgba(255, 215, 102, 0.4);
+  color: #1e6fb8;
+  text-shadow: 0 8px 30px rgba(30, 111, 184, 0.3);
 }
 
 /* ===================== Card Game Screen ===================== */
@@ -499,13 +588,13 @@ body.hide-header-ingame .app-header {
 .cardgame-timer {
   font-size: 2.4rem;
   font-weight: 900;
-  color: #ffffff;
+  color: #12518f;
   font-variant-numeric: tabular-nums;
   min-width: 84px;
 }
 
 .cardgame-timer.timer-warning {
-  color: #ff8f7a;
+  color: #e6503a;
 }
 
 .cardgame-stats {
@@ -517,58 +606,113 @@ body.hide-header-ingame .app-header {
 .stat-pill {
   padding: 5px 9px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(30, 111, 184, 0.15);
   font-weight: 700;
   white-space: nowrap;
+  color: #12518f;
 }
 
 .stat-net {
-  color: #ffd766;
+  color: #b8790f;
 }
 
 .word-card {
   flex: 1;
-  background: linear-gradient(160deg, #16324f, #0e2338);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 1px solid rgba(30, 111, 184, 0.15);
   border-radius: 22px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   padding: 14px;
   min-height: 0;
+  box-shadow: 0 10px 30px rgba(30, 111, 184, 0.1);
+}
+
+.active-number-hint {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3f6c92;
+  margin-bottom: 8px;
+}
+
+.active-number-hint span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffd766;
+  color: #23150a;
+  font-weight: 800;
+  margin-inline-start: 4px;
 }
 
 .word-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
+  flex: 1;
+  justify-content: center;
 }
 
-.word-item {
-  text-align: center;
-  padding: 10px 8px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #93a9c2;
-  opacity: 0.55;
+.word-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
   transition: all 0.2s ease;
 }
 
-.word-item.active {
-  font-size: 1.9rem;
-  font-weight: 900;
-  color: #0c1f33;
-  background: linear-gradient(180deg, #ffe28a, #ffd766);
-  opacity: 1;
-  padding: 20px 12px;
-  box-shadow: 0 10px 30px rgba(255, 215, 102, 0.35);
+.word-number {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  background: #e4f0fa;
+  color: #1e6fb8;
+  border: 1px solid #bcdcf2;
 }
 
-.word-item.done {
+.word-text {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #8fa9c2;
+}
+
+.word-row.active {
+  background: linear-gradient(180deg, #fff6df, #ffe28a);
+  box-shadow: 0 8px 22px rgba(242, 182, 50, 0.3);
+}
+
+.word-row.active .word-number {
+  background: #23150a;
+  color: #ffd766;
+  border-color: #23150a;
+}
+
+.word-row.active .word-text {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #23150a;
+}
+
+.word-row.done {
+  opacity: 0.35;
+}
+
+.word-row.done .word-text {
   text-decoration: line-through;
-  opacity: 0.3;
 }
 
 .cardgame-actions {
@@ -581,7 +725,7 @@ body.hide-header-ingame .app-header {
   text-align: center;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #ffd766;
+  color: #12518f;
 }
 
 .summary-edit-row {
@@ -602,25 +746,25 @@ body.hide-header-ingame .app-header {
   text-align: center;
   padding: 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(30, 111, 184, 0.15);
 }
 
 .summary-position-label {
   font-size: 0.8rem;
-  color: #b9cbe0;
+  color: #3f6c92;
   margin-bottom: 6px;
 }
 
 .summary-position-value {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #12518f;
 }
 
 .summary-position-arrow {
   font-size: 1.4rem;
-  color: #ffd766;
+  color: #1e6fb8;
 }
 
 /* ===================== Victory ===================== */
@@ -639,13 +783,13 @@ body.hide-header-ingame .app-header {
 .victory-title {
   font-size: 1.8rem;
   font-weight: 900;
-  color: #ffd766;
+  color: #12518f;
   margin: 0;
 }
 
 .victory-sub {
   font-size: 1.05rem;
-  color: #dbe8f7;
+  color: #3f6c92;
   margin-bottom: 20px;
 }
 
@@ -654,8 +798,7 @@ body.hide-header-ingame .app-header {
   .countdown-number {
     font-size: 6rem;
   }
-  .word-item.active {
-    font-size: 1.5rem;
-    padding: 14px 10px;
+  .word-row.active .word-text {
+    font-size: 1.3rem;
   }
 }

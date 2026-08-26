@@ -4,9 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>אליטס</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div class="sky-decor" aria-hidden="true">
+  <span class="cloud cloud-1">☁</span>
+  <span class="cloud cloud-2">☁</span>
+  <span class="cloud cloud-3">☁</span>
+  <span class="plane-decor">✈</span>
+</div>
 
 <header id="app-header" class="app-header">
   <div class="header-title">אליטס <span class="header-wings">✈</span></div>
@@ -60,7 +70,7 @@
     <div class="screen-inner">
       <h1 class="screen-title">הלוח</h1>
       <div id="board-track-wrap" class="board-track-wrap">
-        <div id="board-track" class="board-track"></div>
+        <svg id="board-track" class="board-track" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
       <div id="board-teams-list" class="board-teams-list"></div>
       <button id="start-round-btn" class="btn btn-primary btn-large">התחל סיבוב</button>
@@ -97,6 +107,7 @@
       </div>
 
       <div id="word-card" class="word-card">
+        <div class="active-number-hint">התיאור על מספר <span id="active-number-badge">1</span></div>
         <div class="word-list" id="word-list"></div>
       </div>
 
@@ -175,9 +186,9 @@
   <div class="modal-box help-box">
     <h2 class="modal-title">איך משחקים אליטס</h2>
     <ol class="help-list">
-      <li><strong>הכנה</strong> — מחלקים ל-2–4 קבוצות. כל הקבוצות מתחילות בתחילת הלוח.</li>
-      <li><strong>הקלפים</strong> — בכל קלף 5 מילים. המילה הפעילה מודגשת.</li>
-      <li><strong>מהלך התור</strong> — שחקן אחד מתאר, חברו בקבוצה מנחש. יש טיימר אחד לתור. כשמילה נוחשת נכון עוברים למילה הבאה. אסור להגיד את המילה עצמה, חלקים ממנה, מילים מאותו שורש, או להשתמש בפנטומימה או שפות אחרות.</li>
+      <li><strong>הכנה</strong> — מחלקים ל-2–4 קבוצות. כל הקבוצות מתחילות בתחילת מסלול הספירלה.</li>
+      <li><strong>הקלפים</strong> — בכל קלף 5 מילים ממוספרות (1–5), בדיוק כמו באליאס האמיתי. תמיד קוראים רק את המילה שהמספר שלה תואם למספר המשבצת שהקבוצה נמצאת עליה במסלול — לא את שאר המילים בקלף.</li>
+      <li><strong>מהלך התור</strong> — שחקן אחד מתאר, חברו בקבוצה מנחש. יש טיימר אחד לתור. כשמילה נוחשת נכון עוברים למילה הבאה (לפי המספר החדש). אסור להגיד את המילה עצמה, חלקים ממנה, מילים מאותו שורש, או להשתמש בפנטומימה או שפות אחרות.</li>
       <li><strong>ניקוד</strong> — מילה שנוחשה נכון = צעד אחד קדימה. דילוג על מילה = צעד אחד אחורה. טעות (אמירת המילה עצמה/חלק ממנה/מילה מאותו שורש) = צעד אחד אחורה — המנחה אחראי לעצור את הקבוצה.</li>
       <li><strong>המילה האחרונה</strong> — אם נגמר הזמן והמילה האחרונה לא נוחשה, כל הקבוצות יכולות לנחש. הקבוצה הראשונה שמנחשת נכון (המנחה בוחר ידנית) מקבלת את הנקודה עבור אותה מילה בלבד.</li>
       <li><strong>חילוף תפקידים</strong> — בכל תור חדש בתוך אותה קבוצה, המתאר והמנחש מתחלפים.</li>
