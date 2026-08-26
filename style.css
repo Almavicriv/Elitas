@@ -85,10 +85,10 @@ input[type="number"] {
 }
 
 @keyframes fly-across {
-  0% { transform: translateX(0); opacity: 0; }
+  0% { transform: translateX(0) rotate(40deg); opacity: 0; }
   8% { opacity: 0.5; }
   92% { opacity: 0.5; }
-  100% { transform: translateX(130vw); opacity: 0; }
+  100% { transform: translateX(130vw) rotate(40deg); opacity: 0; }
 }
 
 /* ===================== Header ===================== */
@@ -842,10 +842,10 @@ body.on-splash .app-header {
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 64px;
-  height: 64px;
+  width: 76px;
+  height: 76px;
   object-fit: contain;
-  border-radius: 12px;
+  filter: drop-shadow(0 3px 8px rgba(18, 58, 94, 0.25));
 }
 
 /* ===================== Small screens ===================== */
