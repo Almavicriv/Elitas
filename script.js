@@ -1099,6 +1099,23 @@
       openModal("modal-help");
     });
     $("help-close-btn").addEventListener("click", closeHelp);
+
+    $("splash-continue-btn").addEventListener("click", leaveSplash);
+  }
+
+  // ===================== Splash screen =====================
+  function showSplash() {
+    var screens = document.querySelectorAll(".screen");
+    for (var i = 0; i < screens.length; i++) {
+      screens[i].classList.toggle("active", screens[i].id === "screen-splash");
+    }
+    document.body.classList.add("on-splash");
+    $("splash-continue-btn").textContent = state.game ? "המשך משחק" : "התחל";
+  }
+
+  function leaveSplash() {
+    document.body.classList.remove("on-splash");
+    restoreScreenOnLoad();
   }
 
   // ===================== Init =====================
@@ -1108,7 +1125,7 @@
     if (!state.settings.teamNames || state.settings.teamNames.length !== state.settings.numTeams) {
       state.settings.teamNames = DEFAULT_TEAM_NAMES.slice(0, state.settings.numTeams);
     }
-    restoreScreenOnLoad();
+    showSplash();
   }
 
   document.addEventListener("DOMContentLoaded", init);
