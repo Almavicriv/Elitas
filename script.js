@@ -40,11 +40,61 @@
   };
 
   var timerIntervalId = null;
-  var countdownIntervalId = null;
+  var countdownTimeoutIds = [];
   var uiLocked = false;
   var pendingStartAfterHelp = false;
   var pendingBonusOriginTeam = null;
   var audioCtx = null;
+
+  // ===================== Voice-over sound files =====================
+  // עדכנו את הנתיבים כך שיתאימו למיקום קבצי ה-mp3 בפרויקט שלכם.
+  var VOICE_SOUND_PATHS = {
+    whoIsUp: "assets/sounds/מי עולה.mp3.mpeg",
+    briefingStart: "assets/sounds/תדריך מצטרפים.mp3.mpeg",
+    takeoffCountdown: "assets/sounds/רשאים להמריא בעוד 321.mp3.mpeg",
+  };
+
+  // תזמון (במילישניות מתחילת ההקלטה) של הרגעים בהם נשמעים "3", "2", "1"
+  // בהקלטת "רשאים להמריא בעוד... 3 2 1", כדי לסנכרן את התצוגה עם הקול.
+  var TAKEOFF_NUMBER_TIMINGS_MS = [2375, 3420, 3985];
+  var TAKEOFF_TOTAL_DURATION_MS = 4300;
+
+  var voiceSounds = {
+    whoIsUp: new Audio(VOICE_SOUND_PATHS.whoIsUp),
+    briefingStart: new Audio(VOICE_SOUND_PATHS.briefingStart),
+    takeoffCountdown: new Audio(VOICE_SOUND_PATHS.takeoffCountdown),
+  };
+
+  function playVoiceSound(key) {
+    var audio = voiceSounds[key];
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      var p = audio.play();
+      if (p && typeof p.catch === "function") p.catch(function () {});
+    } catch (e) {
+      /* ignore playback failures (e.g. autoplay restrictions) */
+    }
+  }
+
+  function stopVoiceSound(key) {
+    var audio = voiceSounds[key];
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function clearCountdownTimeouts() {
+    countdownTimeoutIds.forEach(function (id) {
+      clearTimeout(id);
+    });
+    countdownTimeoutIds = [];
+  }
 
   // ===================== Utilities =====================
   function shuffle(arr) {
@@ -300,6 +350,7 @@
 
     saveState();
     pendingStartAfterHelp = true;
+    playVoiceSound("briefingStart");
     openModal("modal-help");
   }
 
@@ -527,9 +578,9 @@
   // ===================== End game mid-way =====================
   function endGameNow() {
     clearInterval(timerIntervalId);
-    clearInterval(countdownIntervalId);
+    clearCountdownTimeouts();
+    stopVoiceSound("takeoffCountdown");
     timerIntervalId = null;
-    countdownIntervalId = null;
     state.game = null;
     renderSettings();
     showScreen("settings");
@@ -559,27 +610,33 @@
     var g = state.game;
     var team = g.teams[teamIndex];
     $("countdown-team-name").textContent = isBonus ? "⚠️ נחיתה על מלכודת — סיבוב פתוח לכולם!" : team.name;
-    var n = 3;
-    $("countdown-number").textContent = String(n);
+    $("countdown-number").textContent = "";
     showScreen("countdown");
-    playCountdownBeep();
-    clearInterval(countdownIntervalId);
-    countdownIntervalId = setInterval(function () {
-      n--;
-      if (n <= 0) {
-        clearInterval(countdownIntervalId);
-        countdownIntervalId = null;
-        playCountdownGo();
+
+    clearCountdownTimeouts();
+    playVoiceSound("takeoffCountdown");
+
+    // מציגים את המספרים 3, 2, 1 בדיוק ברגעים שבהם הם נשמעים בהקלטה.
+    TAKEOFF_NUMBER_TIMINGS_MS.forEach(function (delay, i) {
+      var number = TAKEOFF_NUMBER_TIMINGS_MS.length - i;
+      countdownTimeoutIds.push(
+        setTimeout(function () {
+          $("countdown-number").textContent = String(number);
+        }, delay)
+      );
+    });
+
+    // בסיום ההקלטה עוברים למשחק (או לסיבוב הבונוס).
+    countdownTimeoutIds.push(
+      setTimeout(function () {
+        countdownTimeoutIds = [];
         if (isBonus) {
           startBonusRound();
         } else {
           startCardGame();
         }
-      } else {
-        $("countdown-number").textContent = String(n);
-        playCountdownBeep();
-      }
-    }, 1000);
+      }, TAKEOFF_TOTAL_DURATION_MS)
+    );
   }
 
   function startCardGame() {
@@ -1143,6 +1200,9 @@
   }
 
   function leaveSplash() {
+    if (!state.game) {
+      playVoiceSound("whoIsUp");
+    }
     document.body.classList.remove("on-splash");
     restoreScreenOnLoad();
   }
