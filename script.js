@@ -25,11 +25,13 @@
   var SPECIAL_SQUARE_GAP_SPAN = 2; // gap is MIN..MIN+SPAN-1 (4 or 5)
 
   // ===================== State =====================
+  var shuffledDefaultNames = shuffle(DEFAULT_TEAM_NAMES);
+
   var state = {
     screen: "settings",
     settings: {
       numTeams: 2,
-      teamNames: DEFAULT_TEAM_NAMES.slice(0, 2),
+      teamNames: shuffledDefaultNames.slice(0, 2),
       timerDuration: 60,
       winSteps: DEFAULT_STEPS[2],
       stepsManuallyEdited: false,
@@ -54,6 +56,10 @@
       a[j] = tmp;
     }
     return a;
+  }
+
+  function randomizeDefaultNames() {
+    shuffledDefaultNames = shuffle(DEFAULT_TEAM_NAMES);
   }
 
   function buildDeck(pool) {
@@ -215,7 +221,7 @@
       input.type = "text";
       input.className = "team-name-input";
       input.maxLength = 40;
-      input.value = s.teamNames[i] || DEFAULT_TEAM_NAMES[i] || "קבוצה " + (i + 1);
+      input.value = s.teamNames[i] || shuffledDefaultNames[i] || "קבוצה " + (i + 1);
       input.placeholder = "שם קבוצה " + (i + 1);
       (function (idx, inputEl) {
         inputEl.addEventListener("input", function () {
@@ -232,7 +238,7 @@
     s.numTeams = n;
     var names = [];
     for (var i = 0; i < n; i++) {
-      names.push(s.teamNames[i] || DEFAULT_TEAM_NAMES[i]);
+      names.push(s.teamNames[i] || shuffledDefaultNames[i]);
     }
     s.teamNames = names;
     if (!s.stepsManuallyEdited) {
@@ -273,7 +279,7 @@
     var teams = [];
     for (var i = 0; i < s.numTeams; i++) {
       teams.push({
-        name: (s.teamNames[i] || DEFAULT_TEAM_NAMES[i] || "קבוצה " + (i + 1)).trim() || "קבוצה " + (i + 1),
+        name: (s.teamNames[i] || shuffledDefaultNames[i] || "קבוצה " + (i + 1)).trim() || "קבוצה " + (i + 1),
         color: TEAM_COLORS[i],
         position: 0,
       });
@@ -933,6 +939,7 @@
 
   function startNewGameFromVictory() {
     state.game = null;
+    randomizeDefaultNames();
     renderSettings();
     showScreen("settings");
   }
@@ -1061,6 +1068,9 @@
 
     $("start-round-btn").addEventListener("click", openTeamPickModal);
     $("random-team-btn").addEventListener("click", randomTeamPick);
+    $("team-pick-close-btn").addEventListener("click", function () {
+      closeModal("modal-team-pick");
+    });
 
     $("end-game-btn").addEventListener("click", function () {
       openModal("modal-end-game");
@@ -1141,8 +1151,9 @@
   function init() {
     loadState();
     wireEvents();
+    randomizeDefaultNames();
     if (!state.settings.teamNames || state.settings.teamNames.length !== state.settings.numTeams) {
-      state.settings.teamNames = DEFAULT_TEAM_NAMES.slice(0, state.settings.numTeams);
+      state.settings.teamNames = shuffledDefaultNames.slice(0, state.settings.numTeams);
     }
     showSplash();
   }
