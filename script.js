@@ -150,6 +150,20 @@
     playTone(659, 260, "sine");
   }
 
+  function playSuccessSound() {
+    playTone(880, 90, "sine");
+    setTimeout(function () {
+      playTone(1318, 150, "sine");
+    }, 90);
+  }
+
+  function playSkipSound() {
+    playTone(300, 110, "sine");
+    setTimeout(function () {
+      playTone(190, 160, "sine");
+    }, 90);
+  }
+
   function vibrate(pattern) {
     try {
       if (navigator.vibrate) navigator.vibrate(pattern);
@@ -666,6 +680,7 @@
     withUiLock(function () {
       var g = state.game;
       if (!g.round) return;
+      playSuccessSound();
       var timeWasUp = g.round.timeLeft <= 0;
       g.round.correct++;
       advanceWord();
@@ -682,6 +697,7 @@
     withUiLock(function () {
       var g = state.game;
       if (!g.round) return;
+      playSkipSound();
       var timeWasUp = g.round.timeLeft <= 0;
       g.round.skipped++;
       advanceWord();
@@ -792,6 +808,11 @@
     var g = state.game;
     var br = g.bonusRound;
     if (!br) return;
+    if (teamIndex !== null) {
+      playSuccessSound();
+    } else {
+      playSkipSound();
+    }
     var word = g.currentCard[g.currentWordIndex];
     g.usedWords.push(word);
 
