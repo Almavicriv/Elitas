@@ -122,6 +122,12 @@ input[type="number"] {
   opacity: 0.9;
 }
 
+.header-unit-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
 .help-btn {
   width: 36px;
   height: 36px;
@@ -483,6 +489,7 @@ body.on-splash .app-header {
 }
 
 .modal-box {
+  position: relative;
   background: #ffffff;
   border: 1px solid rgba(30, 111, 184, 0.15);
   border-radius: 18px;
@@ -495,6 +502,25 @@ body.on-splash .app-header {
   flex-direction: column;
   gap: 14px;
   box-shadow: 0 20px 60px rgba(18, 58, 94, 0.25);
+}
+
+.modal-close-x {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(30, 111, 184, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+  color: #3f6c92;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close-x:active {
+  background: rgba(30, 111, 184, 0.1);
 }
 
 .modal-title {

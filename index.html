@@ -29,7 +29,10 @@
 </div>
 
 <header id="app-header" class="app-header">
-  <div class="header-title">אליטס <span class="header-wings">✈</span></div>
+  <div class="header-title">
+    <img class="header-unit-logo" src="assets/unit-emblem.png" alt="סמל היחידה">
+    אליטס <span class="header-wings">✈</span>
+  </div>
   <button id="help-btn" class="help-btn" title="עזרה" aria-label="עזרה">?</button>
 </header>
 
@@ -169,6 +172,7 @@
   <!-- ===================== STEAL PICK MODAL ===================== -->
   <div id="modal-steal-pick" class="modal-overlay hidden">
     <div class="modal-box">
+      <button id="steal-modal-close-btn" class="modal-close-x" aria-label="סגור">✕</button>
       <h2 class="modal-title">איזו קבוצה ניחשה נכון?</h2>
       <div id="steal-pick-list" class="team-pick-list"></div>
       <button id="steal-cancel-btn" class="btn btn-secondary">אף אחד לא ניחש</button>

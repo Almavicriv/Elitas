@@ -134,10 +134,6 @@
     }
   }
 
-  function playTick() {
-    playTone(880, 120, "square");
-  }
-
   function playBuzzer() {
     playTone(220, 550, "sawtooth");
   }
@@ -221,12 +217,12 @@
       input.maxLength = 40;
       input.value = s.teamNames[i] || DEFAULT_TEAM_NAMES[i] || "קבוצה " + (i + 1);
       input.placeholder = "שם קבוצה " + (i + 1);
-      (function (idx) {
-        input.addEventListener("input", function () {
-          s.teamNames[idx] = input.value;
+      (function (idx, inputEl) {
+        inputEl.addEventListener("input", function () {
+          s.teamNames[idx] = inputEl.value;
           saveState();
         });
-      })(i);
+      })(i, input);
       wrap.appendChild(input);
     }
   }
@@ -659,7 +655,6 @@
       onTimeUp();
     } else {
       if (g.round.timeLeft <= 3) {
-        playTick();
         vibrate(60);
       }
       renderTimer();
@@ -1084,6 +1079,9 @@
     $("steal-cancel-btn").addEventListener("click", function () {
       closeModal("modal-steal-pick");
       noOneStole();
+    });
+    $("steal-modal-close-btn").addEventListener("click", function () {
+      closeModal("modal-steal-pick");
     });
     $("bonus-skip-btn").addEventListener("click", onBonusSkip);
 
