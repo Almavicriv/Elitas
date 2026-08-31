@@ -1129,6 +1129,16 @@
     });
     $("help-close-btn").addEventListener("click", closeHelp);
 
+    $("contact-btn").addEventListener("click", function () {
+      openModal("modal-contact");
+    });
+    $("contact-close-btn").addEventListener("click", function () {
+      closeModal("modal-contact");
+    });
+    $("modal-contact").addEventListener("click", function (e) {
+      if (e.target === e.currentTarget) closeModal("modal-contact");
+    });
+
     $("splash-continue-btn").addEventListener("click", leaveSplash);
   }
 
