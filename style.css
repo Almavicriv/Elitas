@@ -962,6 +962,13 @@ body.on-splash .app-header {
   left: 16px;
 }
 
+.splash-emblem-team {
+  top: 26px;
+  left: 100px;
+  width: 56px;
+  height: 56px;
+}
+
 /* ===================== Small screens ===================== */
 @media (max-height: 640px) {
   .countdown-number {
